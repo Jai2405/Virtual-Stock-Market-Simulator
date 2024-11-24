@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= name %> details</title>
+    <link rel="stylesheet" href="styles/stock-details.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <div class="bg-body-tertiary border rounded-3 p-3" style="min-height: 300px;">
+        <!-- Stock Details Section -->
+        <div class="portfolio-section mb-4">
+            <h5 class="text-center"><%= name %></h5>
+            <div class="row text-center mt-3">
+                <div class="col portfolio-stock bg-light p-3 mx-2 rounded">
+                    <p class="label font-weight-bold">Current Price</p>
+                    <p class="stock-price">$<%= currentStockPrice %> <span class="text-success">(+2.5%)</span></p>
+                </div>
+                <div class="col portfolio-stock bg-light p-3 mx-2 rounded">
+                    <p class="label font-weight-bold">High</p>
+                    <p class="high">$<%= highPrice %></p>
+                </div>
+                <div class="col portfolio-stock bg-light p-3 mx-2 rounded">
+                    <p class="label font-weight-bold">Low</p>
+                    <p class="low">$<%= lowPrice %></p>
+                </div>
+
+                <div class="col portfolio-stock bg-light p-3 mx-2 rounded">
+                    <p class="label font-weight-bold">Volume</p>
+                    <p class="volume"><%= volume %></p>
+                </div>
+            </div>
+
+
+            <div class="buy-sell-buttons text-center mt-4">
+               <!-- <form action="/buy" method="GET" style="display: inline;">
+                    <button type="submit" class="btn-custom btn-buy" id="openBuyModal">Buy</button>
+                </form>
+
+                <form action="/sell" method="GET" style="display: inline;">
+                    <button type="submit" class="btn-custom btn-sell">Sell</button>
+                </form> -->
+
+                <button type="submit" class="btn-custom btn-buy" id="openBuyModal">Buy</button>
+                <button type="submit" class="btn-custom btn-sell" id="openSellModal">Sell</button>
+            </div>        
+        </div>
+        
+        <!-- Stock Price Chart Section -->
+        <div class="stock-chart mb-3">
+            <h5 class="text-center">Stock Price Chart</h5>
+            <canvas id="stockChart"></canvas>
+
+            <style>
+                #stockChart {
+                    width: 80%;   
+                max-width: 1000px;  
+                height: 500px;       
+                margin: 0 auto;      
+                display: block;      
+                }
+            </style>
+        </div>
+        
+                <!-- Buy Modal -->
+        <div id="buyModal" class="modal">
+            <div class="modal-content">
+                <form action="/buy" method="POST">
+                    <input type="hidden" name="name" value="<%= name %>">
+                    <input type="hidden" name="price" value="<%= currentStockPrice %>">
+                    <span id="closeBuyModal" class="close">&times;</span>
+                    <h2>Buy <%= name %> Stock</h2>
+                    <p>Price per share: $<%= currentStockPrice %></p>
+                    <label for="buyQuantity">Quantity:</label>
+                    <input type="number" id="buyQuantity" name="buyQuantity" min="1" oninput="calculateTotal('buy')" />
+                    <p>Total Price: <span id="buyTotalPrice">$0.00</span></p>
+                    <button onclick="confirmTransaction('buy')" class="btn-custom btn-confirm">Confirm Purchase</button>
+                </form> 
+            </div>
+        </div>
+
+        <!-- Sell Modal -->
+        <div id="sellModal" class="modal">
+            <div class="modal-content">
+                <span id="closeSellModal" class="close">&times;</span>
+                <h2>Sell <%= name %> Stock</h2>
+                <p>Price per share: $<%= currentStockPrice %></p>
+                <label for="sellQuantity">Quantity:</label>
+                <input type="number" id="sellQuantity" name="sellQuantity" min="1" oninput="calculateTotal('sell')" />
+                <p>Total Price: <span id="sellTotalPrice">$0.00</span></p>
+                <form action="/sell" method="GET" style="display: inline;">
+                    <button onclick="confirmTransaction('sell')" class="btn-custom btn-confirm">Confirm Sale</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- News Feed Section -->
+        <div class="news-feed my-5 py-3">
+            <h5 class="text-center">Related News</h5>
+            <ul class="list-unstyled text-center">
+                <% news.forEach(article => { %>
+                    <li><a href="<%= article.url %>"><%= article.title %></a></li>
+                <% }); %>
+            </ul>
+        </div>
+
+    </div>
+
+
+        <!-- JavaScript -->
+        <script>
+            const stockPrice = <%= currentStockPrice %>;
+    
+            function calculateTotal(type) {
+                const quantity = document.getElementById(type + 'Quantity').value;
+                const total = quantity * stockPrice;
+                document.getElementById(type + 'TotalPrice').innerText = `$${total.toFixed(2)}`;
+            }
+    
+            // Modal functionality for Buy
+            document.getElementById('openBuyModal').addEventListener('click', function () {
+                document.getElementById('buyModal').style.display = 'block';
+            });
+    
+            document.getElementById('closeBuyModal').addEventListener('click', function () {
+                document.getElementById('buyModal').style.display = 'none';
+            });
+    
+            // Modal functionality for Sell
+            document.getElementById('openSellModal').addEventListener('click', function () {
+                document.getElementById('sellModal').style.display = 'block';
+            });
+    
+            document.getElementById('closeSellModal').addEventListener('click', function () {
+                document.getElementById('sellModal').style.display = 'none';
+            });
+    
+            // Close modals when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === document.getElementById('buyModal')) {
+                    document.getElementById('buyModal').style.display = 'none';
+                }
+                if (event.target === document.getElementById('sellModal')) {
+                    document.getElementById('sellModal').style.display = 'none';
+                }
+            });
+    
+            function confirmTransaction(type) {
+                const quantity = document.getElementById(type + 'Quantity').value;
+                const total = (quantity * stockPrice).toFixed(2);
+               alert(`You are ${type === 'buy' ? 'buying' : 'selling'} ${quantity} shares for a total of $${total}`);
+                document.getElementById(type + 'Modal').style.display = 'none';
+            }
+        </script>
+
+
+
+
+    
+    
+
+
+    
+
+        <!-- Optional: Link to Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+        var dates = <%- JSON.stringify(dates) %>;        // Array of dates
+        var closePrices = <%- JSON.stringify(closePrices) %>; // Array of close prices
+        // Placeholder script to initialize a sample chart
+        var ctx = document.getElementById('stockChart').getContext('2d');
+        var stockChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates.reverse(), // Replace with actual time data
+                datasets: [{
+                    label: 'Stock Price',
+                    data: closePrices.reverse(), // Replace with actual price data
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { display: true },
+                    y: { display: true }
+                }
+            }
+        });
+        </script>
+
+    <%- include("partials/footer.ejs") %>
+
+</body>
+</html>

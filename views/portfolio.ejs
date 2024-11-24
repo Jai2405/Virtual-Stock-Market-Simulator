@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="styles/stock-details.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+
+    <% for (const transactionNumber in ownedStocks) { %>
+        <p>Transaction <%= transactionNumber %>:</p>
+        <ul>
+          <li>Stock: <%= ownedStocks[transactionNumber].stock %></li>
+          <li>Price: <%= ownedStocks[transactionNumber].price %></li>
+          <li>Quantity: <%= ownedStocks[transactionNumber].quantity %></li>
+          <li>Date: <%= ownedStocks[transactionNumber].date %></li>
+
+        </ul>
+      <% } %>
+
+    <%- include("partials/footer.ejs") %>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+.portfolio-section {
+    background-color: #f9f9f9; /* Light background for contrast */
+    padding: 20px; /* Padding around the section */
+    border-radius: 10px; /* Rounded corners for the section */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+.portfolio-title {
+    font-weight: bold; /* Bold title */
+    font-size: 1.5rem; /* Larger font size */
+    margin-bottom: 20px; /* Spacing below the title */
+}
+
+.portfolio-stock {
+    transition: transform 0.2s; /* Animation effect on hover */
+}
+
+.portfolio-stock:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+}
+
+.label {
+    font-size: 1.1rem; /* Size of stock symbol labels */
+    color: #555; /* Slightly darker text color */
+}
+
+.stock-price, .high, .low, .volume {
+    font-size: 1.5rem; /* Larger font size for prices */
+    color: #333; /* Darker text for better readability */
+}
+
+
+.but-sell-buttons {
+    text-align: center;
+    margin-top: 20px;
+    display: flex;            /* Use flexbox for alignment */
+    justify-content: center;  /* Center the buttons horizontally */
+}
+
+.btn-custom {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px; /* Rounded corners */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin: 0 10px; /* Space between buttons */
+}
+
+.btn-buy {
+    background-color: #28a745; /* Green for Buy */
+    color: white;
+}
+
+.btn-sell {
+    background-color: #dc3545; /* Red for Sell */
+    color: white;
+}
+
+/* Hover effects */
+.btn-custom:hover {
+    transform: translateY(-3px); /* Slight lift effect */
+}
+
+.btn-buy:hover {
+    background-color: #218838; /* Darker green */
+}
+
+.btn-sell:hover {
+    background-color: #c82333; /* Darker red */
+}
+
+/* Active effects */
+.btn-custom:active {
+    transform: translateY(1px); /* Slight push effect */
+}
+
+.news-feed {
+    background-color: #f8f9fa; /* Light background for contrast */
+    padding: 20px; /* Space around the content */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin-top: 20px; /* Space above the news feed */
+}
+
+.news-feed h5 {
+    font-size: 1.25rem; /* Slightly larger font size for the heading */
+    color: #343a40; /* Dark gray color for the heading */
+    margin-bottom: 15px; /* Space below the heading */
+}
+
+.news-feed ul {
+    padding-left: 0; /* Remove default padding for unordered list */
+}
+
+.news-feed li {
+    margin-bottom: 10px; /* Space between list items */
+}
+
+.news-feed a {
+    text-decoration: none; /* Remove underline from links */
+    color: #007bff; /* Bootstrap primary color for links */
+    transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+.news-feed a:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline; /* Underline link on hover for emphasis */
+}
+
+
+
+/* Modal styles */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-custom {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+
+
+.btn-buy {
+    background-color: #4CAF50;
+}
+
+.btn-sell {
+    background-color: #f44336;
+}
+
+.btn-confirm {
+    background-color: #2196F3;
+    padding: 10px 15px;
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#buyTotalPrice, #sellTotalPrice {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+}
+
+
+
+

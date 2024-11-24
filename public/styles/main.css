@@ -1,0 +1,136 @@
+.header-logo {
+    width: 50px;
+    height:auto;
+    padding-left: 20px;
+}
+
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+.container-fluid {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Portfolio Summary Container */
+.portfolio-summary-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.portfolio-section {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Header and Portfolio Metrics */
+.portfolio-section h6 {
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.portfolio-metric p {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+.portfolio-value, .investment-value, .profit-loss {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.text-success {
+    color: #28a745;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+/* Top Performing Stocks */
+.portfolio-stock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.portfolio-stock .stock-symbol {
+    font-size: 16px;
+    color: #333;
+}
+
+.portfolio-stock .stock-gain {
+    font-size: 14px;
+    font-weight: normal;
+}
+
+/* Latest Transactions */
+.transaction-list {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .d-flex {
+        flex-direction: column;
+    }
+    
+    .portfolio-metric {
+        margin-bottom: 15px;
+    }
+
+    .portfolio-stock {
+        margin-bottom: 10px;
+    }
+
+    .transaction-item {
+        font-size: 12px;
+    }
+}
+
+
+
+
+
+/* LOGIN PAGE */
+.login-section  {
+    width: 500px; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the form horizontally */
+  }
+
+.google-section {
+    width: 500px; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the form horizontally */
+  }
+ .register-section p {
+    text-align: center;
+  }
