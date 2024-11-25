@@ -56,11 +56,9 @@ var user_id;
 
 function getTodaysDate() {
     const today = new Date();
-  
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day   
-   = String(today.getDate()).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
   
     return `${year}-${month}-${day}`;
   }
@@ -69,15 +67,15 @@ function getTodaysDate() {
 // Create a login/sign up page as your first page
 
 app.get("/", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.redirect("/home"); // Redirect authenticated users to the home page
-  } else {
-    res.redirect("/login"); // Redirect unauthenticated users to the login page
-  }
+ res.redirect("/home");
 });
 
 app.get("/home", async (req, res) => {
-  res.render("index.ejs");
+  if (req.isAuthenticated()) {
+    res.render("index.ejs");
+  } else {
+    res.redirect("/login"); // Redirect unauthenticated users to the login page
+  }
 });
 
 
@@ -86,7 +84,7 @@ app.get("/register", async (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-  const email = req.body.email;
+  const email = req.body.username;
   const password = req.body.password;
   console.log(email);
   console.log(password);
@@ -977,11 +975,140 @@ app.post("/buy", async (req, res) => {
     const stockPrice = parseFloat(req.body.price); // Stock price per share
     const quantity = parseInt(req.body.buyQuantity, 10); // Quantity
     const date = getTodaysDate();
-    console.log(user_id);
-    //await db.query("INSERT INTO portfolios (user_id, stock, quantity, buy_price) VALUES ($1, $2, $3, $4);", [user_id, stockName, quantity ,stockPrice]);
+    await db.query("INSERT INTO portfolios (user_id, stock, quantity, buy_price, date) VALUES ($1, $2, $3, $4, $5);", [user_id, stockName, quantity ,stockPrice, date]);
     res.render("portfolio.ejs", {ownedStocks : ownedStocks});
 
 });
+
+// app.post("/buy", async (req, res) => {    
+//   const stockName = req.body.name;       // Stock name
+//   const stockPrice = parseFloat(req.body.price); // Stock price per share
+//   const quantity = parseInt(req.body.buyQuantity, 10); // Quantity
+//   const date = getTodaysDate();
+//   await db.query("INSERT INTO portfolios (user_id, stock, quantity, buy_price, date) VALUES ($1, $2, $3, $4);", [user_id, stockName, quantity ,stockPrice]);
+//   res.render("portfolio.ejs", {ownedStocks : ownedStocks});
+// });
+
+// app.post("/sell", async (req, res) => {    
+//   const stockName = req.body.name;       // Stock name
+//   const stockPrice = parseFloat(req.body.price); // Stock price per share
+//   const quantity = parseInt(req.body.buyQuantity, 10); // Quantity
+//   const date = getTodaysDate();
+
+//   var ownedStocks = []
+//   const result3 = db.query("SELECT stocks FROM portfolios WHERE user_id = $1;", [user_id]);
+//   result3.rows.forEach(stock => {
+//     ownedStocks.push(stock.stock);
+//   });
+
+//   try {
+//     const result = await db.query("SELECT * FROM portfolios WHERE user_id = $1 AND stock = $2 AND buy_price = $3", [user_id, stockName, stockPrice]);
+//     if (result.rows.length > 0) {
+//       if (result.rows[0].quantity < quantity) {
+//         res.render("portfolio.ejs", {error: "Error retirving data. Make sure you have enough quantity of " + stockName + " stock"});
+//       } else {
+//         const new_quantity = result.rows.length - quantity;
+//         await db.query("UPDATE portfolios SET quantity = $1", [new_quantity]);
+//         ownedStocks = []
+//         const result4 = db.query("SELECT stocks FROM portfolios WHERE user_id = $1;", [user_id]);
+//         if (result3.rows && result3.rows.length > 0) {
+//           result3.rows.forEach(stock => {
+//               ownedStocks.push(stock.stock);
+//           });
+//       } else {
+//           console.log("No stocks found for user_id:", user_id);
+//       }
+//         res.render("portfolio.ejs", {ownedStocks : ownedStocks});
+//       }
+//     } else {
+//       res.render("portfolio.ejs", {error: "Error retirving data. Make sure you have enough quantity of " + stockName + " stock", ownedStocks: ownedStocks});
+//     }
+//   } catch (error) {
+//     res.render("portfolio.ejs", {error: "Error retirving data. Make sure you have enough quantity of " + stockName + " stock", ownedStocks: ownedStocks});
+//   }
+// });
+
+app.post("/sell", async (req, res) => {    
+  const stockName = req.body.name;       // Stock name
+  const stockPrice = parseFloat(req.body.price); // Stock price per share
+  const quantity = parseInt(req.body.buyQuantity, 10); // Quantity
+  const date = getTodaysDate();
+
+  let ownedStocks = [];
+
+  try {
+    // Fetch the user's owned stocks
+    const result3 = await db.query("SELECT stock FROM portfolios WHERE user_id = $1;", [user_id]);
+    console.log("SANITY ", user_id);
+    if (result3.rows && result3.rows.length > 0) {
+      result3.rows.forEach(stock => {
+        ownedStocks.push(stock.stock);
+      });
+      console.log(ownedStocks);
+    } else {
+      console.log("No stocks found for user_id:", user_id);
+    }
+
+    // Check if the user owns the specific stock with the specified price
+    const result = await db.query(
+      "SELECT * FROM portfolios WHERE user_id = $1 AND stock = $2 AND buy_price = $3",
+      [user_id, stockName, stockPrice]
+    );
+
+    if (result.rows.length > 0) {
+      const stockData = result.rows[0];
+      if (stockData.quantity < quantity) {
+        // User doesn't have enough quantity to sell
+        return res.render("portfolio.ejs", {
+          error: `You do not have enough quantity of ${stockName} stock.`,
+          ownedStocks: ownedStocks
+        });
+      } else {
+        // Update the stock quantity
+        const newQuantity = stockData.quantity - quantity;
+
+        if (newQuantity > 0) {
+          // Update the quantity in the database
+          await db.query(
+            "UPDATE portfolios SET quantity = $1 WHERE user_id = $2 AND stock = $3 AND buy_price = $4",
+            [newQuantity, user_id, stockName, stockPrice]
+          );
+        } else {
+          // If quantity becomes zero, delete the stock from the portfolio
+          await db.query(
+            "DELETE FROM portfolios WHERE user_id = $1 AND stock = $2 AND buy_price = $3",
+            [user_id, stockName, stockPrice]
+          );
+        }
+
+        // Refresh the owned stocks after updating
+        ownedStocks = [];
+        const result4 = await db.query("SELECT stock FROM portfolios WHERE user_id = $1;", [user_id]);
+        if (result4.rows && result4.rows.length > 0) {
+          result4.rows.forEach(stock => {
+            ownedStocks.push(stock.stock);
+          });
+        }
+
+        // Render the updated portfolio
+        return res.render("portfolio.ejs", { ownedStocks: ownedStocks });
+      }
+    } else {
+      // Stock not found in the user's portfolio
+      return res.render("portfolio.ejs", {
+        error: `The stock ${stockName} at the specified price was not found in your portfolio.`,
+        ownedStocks: ownedStocks
+      });
+    }
+  } catch (error) {
+    console.error("Error processing sell request:", error);
+    res.render("portfolio.ejs", {
+      error: "An error occurred while processing your request. Please try again.",
+      ownedStocks: ownedStocks
+    });
+  }
+});
+
 
 app.get("/portfolio", async (req, res) => {    
     
@@ -999,19 +1126,29 @@ passport.use(
       if (result.rows.length > 0) {
         const user = result.rows[0];
         const storedHashedPassword = user.password;
-        bcrypt.compare(password, storedHashedPassword, (err, valid) => {
+        bcrypt.compare(password, storedHashedPassword, async (err, valid) => {
           if (err) {
             console.error("Error comparing passwords:", err);
             return cb(err);
           } else {
             if (valid) {
+              console.log("correct password");
+              const userdata = await db.query("SELECT userid FROM users WHERE email = $1 ", [username]);
+              if (userdata.rows.length > 0) {
+                user_id = userdata.rows[0].userid;
+                console.log(user_id);
+              } else {
+                console.log(" no user_id");
+              }
               return cb(null, user);
             } else {
+              console.log("Incorrect password");
               return cb(null, false);
             }
           }
         });
       } else {
+        console.log("user not found");
         return cb("User not found");
       }
     } catch (err) {
@@ -1050,6 +1187,7 @@ passport.use(
   )
 );
 
+
 passport.serializeUser((user, cb) => {
   cb(null, user);
 });
@@ -1061,5 +1199,3 @@ passport.deserializeUser((user, cb) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-
